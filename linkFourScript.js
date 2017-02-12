@@ -9,7 +9,7 @@ var boardh = canh*0.8;
 var squarew = boardw*0.9/COLNUM;
 var squareh = boardh*0.9/ROWNUM;
 var radius = squareh*0.4;
-var boardArray = [];
+var boardArray;
 var boardSquareColumn = [];
 var turn = 0;
 
@@ -24,12 +24,7 @@ function begin(){
 	{
 		if(!start){
 			start = time; 												// set start during the first "next()" call
-			for(i=0; i<ROWNUM; ++i){
-				boardArray.push([[false, "black"], [false, "black"], [false, "black"], [false, "black"], [false, "black"], [false, "black"], [false, "black"]]);
-			}
-			for(i=0; i<COLNUM; ++i){
-				boardSquareColumn.push(canw*0.1 + boardw*0.05 + squarew * (i+1));
-			}
+			gameSetup();
 		}
 		t = (time - start)/1000.0; 										// In every loop t will be the seconds passed from previous iteration
 		start = time;
@@ -43,6 +38,16 @@ function begin(){
 		window.requestAnimationFrame(next);
 	}
 	window.requestAnimationFrame(next);
+}
+
+function gameSetup(){
+	boardArray = [];
+	for(i=0; i<ROWNUM; ++i){
+		boardArray.push([[false, "black"], [false, "black"], [false, "black"], [false, "black"], [false, "black"], [false, "black"], [false, "black"]]);
+	}
+	for(i=0; i<COLNUM; ++i){
+		boardSquareColumn.push(canw*0.1 + boardw*0.05 + squarew * (i+1));
+	}
 }
 
 function drawBoard(){
@@ -142,9 +147,13 @@ function checkWin(){
 			if((i>2) && (j==(COLNUM-3))) j=COLNUM;
 			else{
 				if(boardArray[i][j][1] == stringColor){
-					if(checkNeighbours(stringColor, i, j)) console.log("The " + stringColor + " player WON!");
+					if(checkNeighbours(stringColor, i, j)){
+						console.log("The " + stringColor + " player WON!");
+						gameSetup();
+						turn = -1;
+						break;
+					}
 				}
-
 			}
 		}
 	}
