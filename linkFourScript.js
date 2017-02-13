@@ -13,34 +13,16 @@ var boardArray;
 var boardSquareColumn = [];
 var turn = 0;
 
-begin()
+var reachable = [];
+var lcs =[];			//longest computer streak info. Ai use this to keep trace of its longest streak
+var lus = [];			//longest human streak
 
-function begin(){
-    
-	var start = null; 													// start will contains actual time expressed in milliseconds
-	var t = null;
-
-	var next = function(time)
-	{
-		if(!start){
-			start = time; 												// set start during the first "next()" call
-			gameSetup();
-		}
-		t = (time - start)/1000.0; 										// In every loop t will be the seconds passed from previous iteration
-		start = time;
-
-		
-		c.clearRect(0, 0, canw, canh);
-		drawBoard();
-		drawDiscs();
-
-
-		window.requestAnimationFrame(next);
-	}
-	window.requestAnimationFrame(next);
-}
+gameSetup()
 
 function gameSetup(){
+	//board game setup
+	c.clearRect(0, 0, canw, canh);
+	drawBoard();
 	boardArray = [];
 	for(i=0; i<ROWNUM; ++i){
 		boardArray.push([[false, "black"], [false, "black"], [false, "black"], [false, "black"], [false, "black"], [false, "black"], [false, "black"]]);
@@ -48,6 +30,11 @@ function gameSetup(){
 	for(i=0; i<COLNUM; ++i){
 		boardSquareColumn.push(canw*0.1 + boardw*0.05 + squarew * (i+1));
 	}
+	
+	// AI setup
+	for(i=0; i<COLNUM; ++i){reachable.push(0);}
+	lcs.push([0, [-1][-1], "none"]);
+	lus.push([0, [-1][-1], "none"]);
 }
 
 function drawBoard(){
@@ -98,16 +85,31 @@ function drawDiscs(){
 $("#boardCanvas").mousedown(function(e)
 {
 	var colIndex = columnIndexClick(e.offsetX);
+	var xCenter;
+	var yCenter;
 	if((colIndex != -1) && (!boardArray[ROWNUM-1][colIndex][0])) {
 		var fromBottom = true;
 		var currentRow = 0;
+		reachable[colIndex]++;
 
 		while(fromBottom){
 			if(boardArray[currentRow][colIndex][0] == false){
 				boardArray[currentRow][colIndex][0] = true;
-				if(turn%2 == 0) boardArray[currentRow][colIndex][1] = "red";
-				else boardArray[currentRow][colIndex][1] = "yellow";
+				if(turn%2 == 0){
+					boardArray[currentRow][colIndex][1] = "red";
+					c.fillStyle = "#8b0000";
+				} 
+				else{
+					boardArray[currentRow][colIndex][1] = "yellow";
+					c.fillStyle = "#ffea00";
+				}
 				fromBottom = false;
+
+				xCenter = canw*0.1 + boardw*0.05 + colIndex*squarew + squarew/2;
+				yCenter = canh*0.1 + boardh*0.95 - currentRow*squareh - squareh/2;
+				c.beginPath();
+				c.arc(xCenter, yCenter, radius, 0, 2*Math.PI); 
+				c.fill();
 			}
 			else{
 				currentRow++;
@@ -115,6 +117,7 @@ $("#boardCanvas").mousedown(function(e)
 		}
 		checkWin();
 		turn++;
+		aiTurn();
 	}
 	else{
 		if(colIndex == -1) console.log("-1!");
@@ -209,4 +212,9 @@ function checkNeighbours(sc, i, j){
 	}
 	return streak;
 
+}
+
+function aiTurn(){
+	var occupied;
+	var row = 0;
 }
