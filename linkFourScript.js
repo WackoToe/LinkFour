@@ -162,8 +162,9 @@ function checkWin(){
 	}
 }
 
-/*	checkNeighbours checks the color of some position around [i,j] where i is the row number, and j the column number. When checkNeighbours finds 4 positions of the 
-*	same color, it returns true. checkNeighbours checks the following positions(marked with x):
+/*	checkNeighbours checks the color of some position around [i,j] where i is the row number, and j the column number. 
+*	When checkNeighbours finds 4 positions of the same color, it returns true. checkNeighbours checks the following 
+*	positions(marked with x):
 *
 *	---------------------------------------------------------
 *	|	x 	|		|		|	x 	|		|		|	x	|
@@ -204,7 +205,7 @@ function checkNeighbours(sc, i, j){
 	// if streak is now true we found a 4-colour-streak, it's useless to proceed, we return true, someone has won
 	if(streak) return streak;
 
-	// Now we check the diagonal up and right
+	// Now we check the diagonal up and left
 	for(k=1; k<4; ++k){
 		if((i>2) || (j<3)) break;
 		if(boardArray[i+k][j-k][1]!= sc) break;
@@ -218,3 +219,4 @@ function aiTurn(){
 	var occupied;
 	var row = 0;
 }
+
